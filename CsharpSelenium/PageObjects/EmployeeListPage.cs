@@ -7,7 +7,7 @@ namespace CsharpSelenium.PageObjects
     public class EmployeeListPage
     {
         IWebDriver driver;
-        IWebElement createNew => driver.FindElement(By.XPath("//a[text()='Create Neww']"));
+        IWebElement createNew => driver.FindElement(By.XPath("//a[text()='Create New']"));
         IWebElement searchField => driver.FindElement(By.Name("searchTerm"));
         IWebElement searchButton => driver.FindElement(By.XPath("//input[contains(@class,'btn')]"));
         IWebElement name => driver.FindElement(By.Id("Name"));
@@ -27,7 +27,7 @@ namespace CsharpSelenium.PageObjects
 
         public void verifyEmployeeList()
         {
-            Assert.That(true, Is.EqualTo(createNew.Displayed));
+            Assert.That(createNew.Displayed, Is.EqualTo(true));
         }
 
         public void createNewEmployee()

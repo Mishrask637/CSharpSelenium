@@ -10,7 +10,7 @@ namespace CsharpSelenium.PageObjects
 
         IWebDriver driver = null;
         IWebElement homeLink => driver.FindElement(By.XPath("//a[text()='Home']"));
-        IWebElement helloText => driver.FindElement(By.XPath("//a[text()='Hello admin!!']"));
+        IWebElement helloText => driver.FindElement(By.XPath("//a[text()='Hello admin!']"));
         IWebElement employeeList => driver.FindElement(By.XPath("//a[text()='Employee List']"));
 
         public HomePage(IWebDriver driver) {
@@ -24,7 +24,7 @@ namespace CsharpSelenium.PageObjects
         
         public void verifyLogin()
         {
-            Assert.That(true, Is.EqualTo(helloText.Displayed));
+            Assert.That(helloText.Displayed, Is.EqualTo(true));
         }
 
         public void clickOnEmployeeList()

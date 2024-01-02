@@ -6,7 +6,7 @@ namespace CsharpSelenium.PageObjects
     public class LoginPage
     {
         IWebDriver driver;
-        IWebElement loginLink => driver.FindElement(By.LinkText("Loginn"));
+        IWebElement loginLink => driver.FindElement(By.LinkText("Login"));
         IWebElement userName => driver.FindElement(By.Name("UserName"));
         IWebElement password => driver.FindElement(By.Id("Password"));
         IWebElement rememberMe => driver.FindElement(By.Id("RememberMe"));

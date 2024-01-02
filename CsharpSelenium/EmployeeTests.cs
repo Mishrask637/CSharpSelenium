@@ -8,7 +8,7 @@ using OpenQA.Selenium;
 namespace CsharpSelenium
 {
     [TestFixture("Chrome")]
-    //[TestFixture("Edge")]
+    [TestFixture("Edge")]
     public class Tests
     {
         IWebDriver? driver = null;
@@ -16,7 +16,20 @@ namespace CsharpSelenium
         HomePage? home = null;
         EmployeeListPage? employees = null;
         ExtentReports report = null;
-        ExtentTest test = null;
+        ThreadLocal<ExtentTest> test = new ThreadLocal<ExtentTest>();
+
+        public ThreadLocal<ExtentTest> Test { 
+        
+            get
+            {
+                return test;
+            }
+            set
+            {
+                test = value;
+            }
+
+        }
 
         public Tests(string browser) { 
             BaseClass.browser.Value = browser;
@@ -32,19 +45,19 @@ namespace CsharpSelenium
         [Test, Order(0)]
         public void EASiteTest()
         {
-            test = report.CreateTest(TestContext.CurrentContext.Test.Name).Info("Test Started");
+            test.Value = report.CreateTest(TestContext.CurrentContext.Test.Name).Info("Test Started");
             login = new LoginPage(driver);
             if (login != null)
             {
                 string url = "http://eaapp.somee.com/";
                 login.navigateToUrl(url);
-                ExtentReportUtility.extentInfo(test, "Navigated to url : "+url);
+                ExtentReportUtility.extentInfo(test.Value, "Navigated to url : "+url);
                 login.clickOnLoginLink();
-                ExtentReportUtility.extentInfo(test, "Clicked on Login Link");
+                ExtentReportUtility.extentInfo(test.Value, "Clicked on Login Link");
                 login.enterUserData();
-                ExtentReportUtility.extentInfo(test, "User Data entered successfully..");
+                ExtentReportUtility.extentInfo(test.Value, "User Data entered successfully..");
                 login.clickOnLoginButton();
-                ExtentReportUtility.extentInfo(test, "Clicked on login button");
+                ExtentReportUtility.extentInfo(test.Value, "Clicked on login button");
             }
             else
             {
@@ -55,25 +68,25 @@ namespace CsharpSelenium
         [Test, Order(1)]
         public void EAHomePageTest()
         {
-            test = report.CreateTest(TestContext.CurrentContext.Test.Name).Info("Test Started");
+            test.Value = report.CreateTest(TestContext.CurrentContext.Test.Name).Info("Test Started");
             home = new HomePage(driver);
             home.verifyLogin();
-            ExtentReportUtility.extentInfo(test, "HomePage Verified");
+            ExtentReportUtility.extentInfo(test.Value, "HomePage Verified");
             home.clickOnEmployeeList();
-            ExtentReportUtility.extentInfo(test, "Clicked on Employee List");
+            ExtentReportUtility.extentInfo(test.Value, "Clicked on Employee List");
         }
 
         [Test, Order(2)]
         public void EmployeeListPageTest()
         {
-            test = report.CreateTest(TestContext.CurrentContext.Test.Name).Info("Test Started");
+            test.Value = report.CreateTest(TestContext.CurrentContext.Test.Name).Info("Test Started");
             employees = new EmployeeListPage(driver);
             employees.verifyEmployeeList();
-            ExtentReportUtility.extentInfo(test, "Employee List Verified");
+            ExtentReportUtility.extentInfo(test.Value, "Employee List Verified");
             employees.createNewEmployee();
-            ExtentReportUtility.extentInfo(test, "New Employee Created");
+            ExtentReportUtility.extentInfo(test.Value, "New Employee Created");
             employees.searchAndDeleteEmployee();
-            ExtentReportUtility.extentInfo(test, "Searched and deleted the employee");
+            ExtentReportUtility.extentInfo(test.Value, "Searched and deleted the employee");
         }
 
         [TearDown]
@@ -91,12 +104,17 @@ namespace CsharpSelenium
             if (status.Equals("Failed"))
             {
                 Console.WriteLine("In ss");
-                SeleniumCustomCommands.takeScreenshot(driver);
-                ExtentReportUtility.extentFail(test," Test Failed : "+ TestContext.CurrentContext.Test.Name);
+                SeleniumCustomCommands.takeScreenshotAsFile(driver);
+                ExtentReportUtility.extentFail(test.Value, " Test Failed : "+ TestContext.CurrentContext.Test.Name + TestContext.CurrentContext.Result.StackTrace);
+                ExtentReportUtility.takeScreenshotAsBase64String(driver, test.Value);
             }
-            else
+            else if (status.Equals("Passed"))
             {
-                ExtentReportUtility.extentPass(test, "Test Passed");
+                ExtentReportUtility.extentPass(test.Value, "Test Passed : " + TestContext.CurrentContext.Test.Name);
+            }
+            else if (status.Equals("Skipped"))
+            {
+                ExtentReportUtility.extentPass(test.Value, "Test Skipped: " + TestContext.CurrentContext.Test.Name);
             }
         }
 

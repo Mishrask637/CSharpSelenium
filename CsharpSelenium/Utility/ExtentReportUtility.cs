@@ -1,5 +1,6 @@
 ﻿using AventStack.ExtentReports;
 using AventStack.ExtentReports.Reporter;
+using OpenQA.Selenium;
 
 namespace CsharpSelenium.Utility
 {
@@ -64,8 +65,10 @@ namespace CsharpSelenium.Utility
             test.Fail(fail);
         }
 
-        public static void attachReport(ExtentTest test, string ss)
+        public static void takeScreenshotAsBase64String(IWebDriver driver,ExtentTest test)
         {
+            Screenshot ts = ((ITakesScreenshot)driver).GetScreenshot();
+            string ss = ts.AsBase64EncodedString;
             test.AddScreenCaptureFromBase64String(ss);
         }
     }

@@ -6,7 +6,18 @@ namespace CsharpSelenium.Utility
 {
     public static class SeleniumCustomCommands
     {
-        static string screenShotPath = "C:/Users/Namrata/Documents/CSharpProjects/CsharpSelenium/CsharpSelenium/Screenshot/";
+        public static string screenShotPath = "C:/Users/Namrata/Documents/CSharpProjects/CsharpSelenium/CsharpSelenium/Screenshot/";
+        static string dateTimeDay = DateTime.Now.ToString("dd");
+        static string dateTimeMonth = DateTime.Now.ToString("MM");
+        static string dateTimeYear = DateTime.Now.ToString("yyyy");
+        static string dateTimeHour = DateTime.Now.ToString("hh");
+        static string dateTimeMin = DateTime.Now.ToString("mm");
+        static string dateTimeSec = DateTime.Now.ToString("ss");
+        static DateTime now = DateTime.Now;
+        public static string dateTime = now.ToString("dd-MM-yyyy-HH-ss");
+        public static string testName = TestContext.CurrentContext.Test.Name;
+        public static string directoryPath = screenShotPath + "/" + dateTimeDay + "/" + dateTimeMonth + "/" + dateTimeYear + "/" + dateTimeHour + "_" + dateTimeMin + "_" + dateTimeSec;
+
 
         public static void click(this IWebElement element)
         {
@@ -96,20 +107,11 @@ namespace CsharpSelenium.Utility
             return alertText;
         }
 
-        public static void takeScreenshot(IWebDriver driver)
+        public static void takeScreenshotAsFile(IWebDriver driver)
         {
-            DateTime now = DateTime.Now;
-            string dateTimeDay = DateTime.Now.ToString("dd");
-            string dateTimeMonth = DateTime.Now.ToString("MM");
-            string dateTimeYear = DateTime.Now.ToString("yyyy");
-            string dateTimeHour = DateTime.Now.ToString("hh");
-            string dateTimeMin = DateTime.Now.ToString("mm");
-            string dateTimeSec = DateTime.Now.ToString("ss");
-            string dateTime = now.ToString("dd-MM-yyyy-HH-ss");
-            string testName = TestContext.CurrentContext.Test.Name;
             Screenshot ts = ((ITakesScreenshot)driver).GetScreenshot();
-            Directory.CreateDirectory(screenShotPath + "/" + dateTimeDay + "/" + dateTimeMonth + "/" + dateTimeYear + "/" + dateTimeHour + "_" + dateTimeMin + "_" + dateTimeSec);
-            ts.SaveAsFile(screenShotPath +"/"+ dateTimeDay+"/"+ dateTimeMonth+"/"+ dateTimeYear +"/"+dateTimeHour+"_"+dateTimeMin+"_"+dateTimeSec+"/"+testName+"_"+dateTime+".png");
+            Directory.CreateDirectory(directoryPath);
+            ts.SaveAsFile(directoryPath+"/"+testName+"_"+dateTime+".png");
         }
     }
 }
